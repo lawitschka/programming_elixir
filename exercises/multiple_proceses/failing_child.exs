@@ -19,7 +19,8 @@ defmodule Parent do
   end
 end
 
-spawn_link Child, :report_back, []
+# spawn_link Child, :report_back, []
+spawn_monitor Child, :report_back, []
 :timer.sleep 500
 Parent.wait_for_reports()
 
@@ -32,3 +33,7 @@ Parent.wait_for_reports()
 # 17:42:40.165 [error] Process #PID<0.79.0> raised an exception
 # ** (RuntimeError) Boom! This went horribly wrong...
 #     exercises/multiple_proceses/failing_child.exs:8: Child.report_back/0
+#
+# In case of `spawn_monitor` the parent process keeps on working, but receives
+# a notification from the runtime that a child process died:
+#   {:DOWN, #Reference<0.0.3.25>, :process, #PID<0.79.0>, {%RuntimeError{message: "Boom! This went horribly wrong..."}, [{Child, :report_back, 0, [file: 'exercises/multiple_proceses/failing_child.exs', line: 8]}]}}

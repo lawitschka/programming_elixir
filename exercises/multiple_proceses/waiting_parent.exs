@@ -22,10 +22,15 @@ defmodule Parent do
   end
 end
 
-spawn_link Child, :report_back, [self()]
+# spawn_link Child, :report_back, [self()]
+spawn_monitor Child, :report_back, [self()]
 :timer.sleep 500
 Parent.wait_for_reports()
 
 # Parent receives only one message: _{ :ok, "Hello, parent process!" }_
 # No matter how long the parent process sleeps, the messages sent to it are
 # received. Thus, existing messages are queued.
+#
+# In case of `spawn_monitor`, the parent process als receives the `:DOWN`
+# message, i.e. the report that the child process exited:
+#   {:DOWN, #Reference<0.0.1.5>, :process, #PID<0.79.0>, :normal}
